@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Dr. Akshay Karthick</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Chat with Dr. Akshay Karthick</h2>
+        </div>
+        <div class="chat-box" id="chat-box">
+            <!-- Chat messages will appear here -->
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message..." />
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#send-button').click(function() {
+                let userInput = $('#user-input').val();
+                if (userInput.trim() !== "") {
+                    addMessage("You", userInput);
+                    $('#user-input').val("");
+
+                    $.ajax({
+                        url: '/chat',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ message: userInput }),
+                        success: function(response) {
+                            addMessage("Dr. Akshay Karthick", response.reply);
+                        },
+                        error: function() {
+                            addMessage("Error", "An error occurred while communicating with the server.");
+                        }
+                    });
+                }
+            });
+
+            $('#user-input').keypress(function(e) {
+                if (e.which === 13) {
+                    $('#send-button').click();
+                }
+            });
+
+            function addMessage(sender, message) {
+                const messageDiv = `<div class="message ${sender === 'You' ? 'user-message' : 'doctor-message'}">
+                                        <strong>${sender}:</strong> ${message}
+                                    </div>`;
+                $('#chat-box').append(messageDiv);
+                $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight); // Scroll to the bottom
+            }
+        });
+    </script>
+</body>
+</html>
