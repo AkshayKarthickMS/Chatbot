@@ -24,9 +24,19 @@
     <script>
         $(document).ready(function() {
             $('#send-button').click(function() {
+                sendMessage();
+            });
+
+            $('#user-input').keypress(function(e) {
+                if (e.which === 13) {
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
                 let userInput = $('#user-input').val();
                 if (userInput.trim() !== "") {
-                    addMessage("You", userInput);
+                    addMessage("You", userInput, "sent");
                     $('#user-input').val("");
 
                     $.ajax({
@@ -35,24 +45,22 @@
                         contentType: 'application/json',
                         data: JSON.stringify({ message: userInput }),
                         success: function(response) {
-                            addMessage("Dr. Akshay Karthick", response.reply);
+                            addMessage("Dr. Akshay Karthick", response.reply, "received");
                         },
                         error: function() {
-                            addMessage("Error", "An error occurred while communicating with the server.");
+                            addMessage("Error", "An error occurred while communicating with the server.", "received");
                         }
                     });
                 }
-            });
+            }
 
-            $('#user-input').keypress(function(e) {
-                if (e.which === 13) {
-                    $('#send-button').click();
-                }
-            });
-
-            function addMessage(sender, message) {
-                const messageDiv = `<div class="message ${sender === 'You' ? 'user-message' : 'doctor-message'}">
-                                        <strong>${sender}:</strong> ${message}
+            function addMessage(sender, message, messageType) {
+                const timeStamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const messageDiv = `<div class="message ${messageType}">
+                                        <div class="message-content">
+                                            <strong>${sender}:</strong> ${message}
+                                            <span class="timestamp">${timeStamp}</span>
+                                        </div>
                                     </div>`;
                 $('#chat-box').append(messageDiv);
                 $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight); // Scroll to the bottom
