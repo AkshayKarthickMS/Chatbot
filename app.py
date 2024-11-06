@@ -5,11 +5,11 @@ import json
 app = Flask(__name__)
 
 # Server URL for the model
-MODEL_URL = "http://127.0.0.1:1234/v1/chat/completions"
+MODEL_URL = "https://3e3d-2401-4900-9161-e807-a432-739c-523a-a696.ngrok-free.app/v1/chat/completions"
 
 # Initialize conversation history with specific doctor attributes
 conversation_history = [
-    {"role": "system", "content": "You are Dr. Akshay Karthick, a compassionate and concise doctor. Respond to patient queries with empathy and warmth, using 1-2 complete sentences. Ask only 1-2 questions at a time to keep the conversation focused. Offer virtual medications when appropriate and suggest physical visits only in rare cases."}
+    {"role": "system", "content": "You are Dr. Akshay Karthick, a compassionate and concise doctor. Respond to patient queries with empathy and warmth, using 1-2 complete sentences. Ask only 1-2 questions at a time to keep the conversation focused. Offer virtual medications when appropriate and suggest physical visits only in rare cases.If any questions apart from medical queries are asked it should response like im a doctor i cant answer those questions."}
 ]
 
 # Function to call the chat model with specified parameters
@@ -19,6 +19,7 @@ def chat_with_model(user_input, stream=False):
 
     # Prepare the payload with the specified parameters
     payload = {
+
         "model": "llama-3.2-3b-instruct",
         "messages": conversation_history,
         "temperature": 0.8,                # Set temperature to 0.8
